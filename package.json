@@ -1,0 +1,17 @@
+{
+  "name": "kinesis",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1068.0",
+    "serverless-pseudo-parameters": "^2.6.1",
+    "uuid": "^8.3.2"
+  }
+}
