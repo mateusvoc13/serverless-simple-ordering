@@ -54,6 +54,30 @@ module.exports.notifyExternalParties = async (event) => {
     })
 }
 
+module.exports.notifyDeliveryComapny = async (event) => {
+    // Some HTTP call
+    console.log('Letes imagine that we call the delivery company endpoint')
+
+    return 'done';
+}
+
+module.exports.orderDelivered = async (event) => {
+    const body = JSON.parse(event.body);
+    const orderId = body.orderId;
+    const deliveryCompanyId = body.deliveryCompanyId;
+    const orderReview = body.orderReview;
+
+    return deliveryManger.orderDelivered(
+        orderId, deliveryCompanyId, orderReview
+    ).then(
+        () => {
+            return createResponse(200, `Order with ${orderId} was delivered successfully by companyId ${deliveryCompanyId}`);
+        }).catch(error =>  {
+            return createResponse(400, error);
+        });
+}
+
+
 function getCakeProducerPromise(records) {
     const ordersPlaced = records.filter(r => r.eventType == 'order_placed');
 
