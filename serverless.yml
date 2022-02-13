@@ -6,6 +6,7 @@ frameworkVersion: '3'
 provider:
   name: aws
   runtime: nodejs12.x
+  profile: training
 
   iamRoleStatements:
     - Effect: Allow
@@ -19,6 +20,16 @@ provider:
         - kinesis:PutRecord
       Resource:
         - arn:aws:kinesis:${aws:region}:${aws:accountId}:stream/order-events
+    - Effect: Allow
+      Action:
+        - ses:SendEmail
+      Resource:
+        - "*"
+      Condition:
+        StringEquals:
+          ses:FromAddress:
+            - mateus@gmail.com
+
 
 functions:
   createOrder:
@@ -30,6 +41,24 @@ functions:
     environment:
       orderTableName: ordersTable
       orderStreamName: order-events
+  orderFulfillment:
+    handler: handler.orderFulfillment
+    events:
+        - http:
+            path: /order/fulfill
+            method: post
+    environment:
+      orderTableName: ordersTable
+      orderStreamName: order-events
+  notifyExternalParties:
+    handler: handler.notifyExternalParties
+    events:
+      - stream:
+          arn:aws:kinesis:${aws:region}:${aws:accountId}:stream/order-events
+    environment:
+        region: ${aws:region}
+        cakeProducerEmail: mateus@gmail.com
+        orderingSystemEmail: mateus@gmail.com
 
 resources:
   Resources:
